@@ -1,0 +1,49 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+.auth-container {
+  background-image: url(./assets/images/auth-bg.png);
+  background-position: center center;
+  background-size: cover;
+}
+.bg-overlay {
+  background: linear-gradient(
+    45deg,
+    rgba(47, 140, 96, 0.8),
+    rgba(0, 0, 0, 0.8)
+  );
+}
+.custom-input {
+  display: flex;
+  align-items: center;
+  background: #f7f7f7;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+.custom-input i {
+  color: #565555;
+  font-size: 20px;
+}
+
+.custom-input input {
+  border: none;
+  outline: none;
+  background: none;
+  flex: 1;
+  font-size: 14px;
+}
+.divider {
+  background: #ccc;
+  height: 30px;
+  width: 2px;
+  margin: 0 10px;
+}
+.custom-input:focus-within {
+  box-shadow: 0 0 0 3px rgba(40, 167, 69);
+}
+.custom-input:focus-within .divider {
+  background: rgb(40, 167, 69);
+}
