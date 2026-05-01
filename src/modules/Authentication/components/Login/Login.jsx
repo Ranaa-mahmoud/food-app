@@ -1,12 +1,13 @@
 import { useState } from "react";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import axiosClient from "../../../../api/axiosClient";
 
-export default function Login() {
+
+export default function Login({saveLoginData}) {
+  
   const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
 
   let {
@@ -17,11 +18,10 @@ export default function Login() {
 
   const onSubmit = async (data) => {
     try {
-      let response = await axios.post("https://upskilling-egypt.com:3006/api/v1/Users/Login",data);
-
-      localStorage.setItem("token", response.data?.data?.accessToken);
-      toast.success("Login successful 🎉");
-
+      let response = await axiosClient.post("/Users/Login",data);
+localStorage.setItem("token", response.data?.token);
+     toast.success("Login successful 🎉");
+       saveLoginData()
       navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed ❌");

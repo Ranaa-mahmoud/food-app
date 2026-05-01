@@ -1,9 +1,11 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
+/* input auth login */
 .auth-container {
-  background-image: url(./assets/images/auth-bg.png);
+  background-image: url('/src/assets/images/auth-bg.png');
   background-position: center center;
   background-size: cover;
 }
@@ -13,6 +15,10 @@
     rgba(47, 140, 96, 0.8),
     rgba(0, 0, 0, 0.8)
   );
+}
+.header-bg{
+  background-image: url(./assets/images/header-bg-svg.svg);
+  background-size: cover;
 }
 .custom-input {
   display: flex;
@@ -47,3 +53,21 @@
 .custom-input:focus-within .divider {
   background: rgb(40, 167, 69);
 }
+/* input auth login */
+
+/*  start sidebar  */
+.ps-sidebar .ps-sidebar-container{
+  background-color: #1f263e;
+  height: 100vh;  
+  border-top-right-radius:58px ;
+
+}
+.ps-sidebar .ps-menu-button{
+  color: #fff !important;
+  transition: all 1s;
+}
+.ps-sidebar .ps-menu-button:hover{
+  background-color: rgba(0, 146, 77, 0.1) !important;
+  border-left: 4px solid rgba(0,146,71, 1);
+}
+/* end sidebar */

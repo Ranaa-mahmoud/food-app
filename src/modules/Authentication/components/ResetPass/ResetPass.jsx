@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axiosClient from "../../../../api/axiosClient";
 
 export default function ResetPass() {
   const navigate=useNavigate()
@@ -17,8 +17,8 @@ export default function ResetPass() {
 
   const onSubmit = async (data) => {
     try {
-      let response = await axios.post(
-        "https://upskilling-egypt.com:3006/api/v1/Users/Reset",
+      let response = await axiosClient.post(
+        "/Users/Reset",
         data,
       );
 
