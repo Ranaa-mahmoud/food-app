@@ -4,7 +4,7 @@ export const GetRecipes = () => {
   return axiosClient.get("/Recipe");
 };
 
-export const DeleteRecipe = (id) => {
+export const deleteRecipe = (id) => {
   return axiosClient.delete(`/Recipe/${id}`);
 };
 

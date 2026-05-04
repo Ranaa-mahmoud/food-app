@@ -71,3 +71,6 @@
   border-left: 4px solid rgba(0,146,71, 1);
 }
 /* end sidebar */
+thead th {
+  padding: 20px 15px; /* زودي الرقم حسب ما تحبي */
+}

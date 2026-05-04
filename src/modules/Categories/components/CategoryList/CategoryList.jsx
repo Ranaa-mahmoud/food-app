@@ -1,54 +1,41 @@
+import { useEffect, useState } from "react";
 import Header from "../../../Shared/components/Header/Header";
 import photo from "/src/assets/images/header.png";
-import { useEffect, useState } from "react";
+import { getCategories } from "../../../../api/modules/Categories";
 import NoData from "../../../Shared/components/NoData/NoData";
-import axiosClient from "../../../../api/axiosClient";
+import { deleteCategory } from './../../../../api/modules/Categories';
 
 export default function CategoryList() {
-  const [categories, setCategories] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [name, setName] = useState("");
 
-  // GET
-  const getCategories = async () => {
-    try {
-      const response = await axiosClient.get(
-        "/Category/?pageSize=10&pageNumber=1"
-      );
-      setCategories(response.data?.data);
-    } catch (error) {
-      console.log(error);
+  const[categoriesList,setCategoriesList]=useState([]);
+
+  // get category
+  
+  const getCategory=async()=>{
+    try{
+      const response= await getCategories()
+     setCategoriesList(response?.data?.data)
     }
-  };
-
-  // DELETE
-  const deleteCategory = async (id) => {
-    try {
-      await axiosClient.delete(`/Category/${id}`);
-
-      setCategories((prev) =>
-        prev.filter((cat) => cat.id !== id)
-      );
-    } catch (error) {
-      console.log(error);
+    catch(error){
+      console.log(error)
     }
-  };
+  }
+// delete
+const DeleteCategory=async(id)=>{
+  try{
+      await deleteCategory(id)
+      setCategoriesList((prev) =>
+      prev.filter((category) => category.id !== id)
+    );
+  }catch(error){
+    console.log(error)
+  }
+ 
+}
 
-  // UPDATE
-  const updateCategory = async (id, data) => {
-    try {
-      await axiosClient.put(`/Category/${id}`, data);
-
-      getCategories();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getCategories();
-  }, []);
-
+  useEffect(()=>{
+    getCategory()
+  },[])
   return (
     <>
       <Header
@@ -60,81 +47,51 @@ export default function CategoryList() {
         description="You can now add your items that any user can order it from the Application and you can edit"
         imgUrl={photo}
       />
+      <div className=" px-5 py-3   d-flex justify-content-between justify-content-center align-items-center">
+        <div>
+          <h4>Categories Table Details</h4>
+          <span>You can check all details</span>
+        </div>
+        <button className="btn btn-success">Add New Category</button>
+      </div>
+      <div className="px-5 py-3 ">
+      {categoriesList.length>0?
+        <table className="table table-striped table-responsive text-center  ">
+ <thead className="table-light  fs-5">
+  <tr style={{ height: "50px" }}>
+    <th className="py-4 px-3" scope="col">#</th>
+    <th className="py-4 px-3" scope="col">Name</th>
+    <th className="py-4 px-3" scope="col">Creation date</th>
+    <th className="py-4 px-3" scope="col">Action</th>
+  </tr>
+</thead>
+  <tbody> 
+  
+       {categoriesList.map(category=>
+      <tr key={category.id} style={{ height: "65px" }}>
+  <th scope="row" className="py-3 px-3">{category.id}</th>
+  
+  <td className="py-3 px-3">{category.name}</td>
+  
+  <td className="py-3 px-3">{category.creationDate}</td>
+  
+  <td className="py-3 px-3">
+    <i 
+      className="fa fa-edit text-warning mx-2" 
+      style={{ cursor: "pointer", fontSize: "18px" }}
+    ></i>
+    
+    <i  
+ onClick={() => DeleteCategory(category.id)}
+      className="fa fa-trash text-danger" 
+      style={{ cursor: "pointer", fontSize: "18px" }}
+    ></i>
+  </td>
+</tr>
+    )}
+  </tbody>
+</table>:<NoData/>    }
 
-      <div className="p-4">
-        {categories.length > 0 ? (
-          <table className="table table-striped table-hover align-middle text-center">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Creation Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {categories.map((category) => (
-                <tr key={category.id}>
-                  <td>{category.id}</td>
-
-                  <td>
-                    {editId === category.id ? (
-                      <input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                      />
-                    ) : (
-                      category.name
-                    )}
-                  </td>
-
-                  <td>{category.creationDate}</td>
-
-                  <td>
-                    {editId === category.id ? (
-                      <>
-                        <button
-                          className="btn btn-success btn-sm mx-1"
-                          onClick={() => {
-                            updateCategory(editId, { name });
-                            setEditId(null);
-                          }}
-                        >
-                          Save
-                        </button>
-
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => setEditId(null)}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <i
-                        onClick={() => {
-                          setEditId(category.id);
-                          setName(category.name);
-                        }}
-                        className="fa fa-edit text-warning mx-2"
-                        style={{ cursor: "pointer" }}
-                      ></i>
-                    )}
-
-                    <i
-                      onClick={() => deleteCategory(category.id)}
-                      className="fa fa-trash text-danger"
-                      style={{ cursor: "pointer" }}
-                    ></i>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <NoData />
-        )}
       </div>
     </>
   );
