@@ -1,21 +1,21 @@
 import axiosClient from "../axiosClient";
 
-export const GetRecipes = () => {
+export const getRecipes = () => {
   return axiosClient.get("/Recipe");
 };
 
-export const deleteRecipe = (id) => {
-  return axiosClient.delete(`/Recipe/${id}`);
+export const getRecipeById = (id) => {
+  return axiosClient.get(`/Recipe/${id}`);
 };
 
-export const UpdateRecipe = (id, data) => {
-  return axiosClient.put(`/Recipe/${id}`, data);
-};
-
-export const CreateRecipe = (data) => {
+export const createRecipe = (data) => {
   return axiosClient.post("/Recipe", data);
 };
 
-export const GetRecipeById = (id) => {
-  return axiosClient.get(`/Recipe/${id}`);
+export const updateRecipe = (id, data) => {
+  return axiosClient.put(`/Recipe/${id}`, data);
+};
+
+export const deleteRecipes = (id) => {
+  return axiosClient.delete(`/Recipe/${id}`);
 };

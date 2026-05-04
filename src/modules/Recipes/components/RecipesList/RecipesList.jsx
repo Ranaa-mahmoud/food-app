@@ -2,47 +2,43 @@ import Header from "../../../Shared/components/Header/Header";
 import photo from "/src/assets/images/header.png";
 import { useEffect, useState } from "react";
 import NoData from "../../../Shared/components/NoData/NoData";
-import axiosClient from "../../../../api/axiosClient";
+import { deleteRecipes, getRecipes } from "../../../../api/modules/Recipes";
 
 export default function RecipesList() {
-  const [listRecipes, setListRecipes] = useState([]);
-  const [editId, setEditId] = useState(null);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    tagId: ""
-  });
+ const[recipesList,setRecipesList]=useState([]);
 
-  // GET
-  const getRecipes = async () => {
-    const response = await axiosClient.get(
-      "/Recipe/?pageSize=10&pageNumber=1"
+  // get category
+  const getList=async()=>{
+    try{
+      const response= await getRecipes()
+     setRecipesList(response?.data?.data)
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+// delete
+const deleteRecipe=async(id)=>{
+  try{
+      await deleteRecipes(id)
+      setRecipesList((prev) =>
+        prev.filter((recipe) => recipe.id !== id)
     );
-    setListRecipes(response.data?.data);
-  };
+  }catch(error){
+    console.log(error)
+  }
+ 
+}
 
-  // DELETE
-  const deleteRecipes = async (id) => {
-    await axiosClient.delete(`/Recipe/${id}`);
+  useEffect(()=>{
+    getList()
+  },[])
+ 
 
-    setListRecipes((prev) =>
-      prev.filter((recipe) => recipe.id !== id)
-    );
-  };
+ 
 
-  // UPDATE
-  const updateRecipes = async (id, data) => {
-    await axiosClient.put(`/Recipe/${id}`, data);
-
-    getRecipes();
-  };
-
-  useEffect(() => {
-    getRecipes();
-  }, []);
-
+ 
   return (
     <>
       <Header
@@ -53,167 +49,70 @@ export default function RecipesList() {
         imgUrl={photo}
       />
 
-      <div className="d-flex justify-content-between px-4 py-3">
+      <div className="px-5 py-3 d-flex justify-content-between justify-content-center align-items-center">
         <div>
           <h4>Recipe Table Details</h4>
           <span>You can check all details</span>
         </div>
         <button className="btn btn-success">Add New Item</button>
       </div>
+<div className="px-5 py-3 ">
+      {recipesList.length>0?
+        <table className="table table-striped table-responsive text-center  ">
+ <thead className="table-light  fs-5">
+  <tr style={{ height: "50px" }}>
+    <th className="py-4 px-3" scope="col">#</th>
+    <th className="py-4 px-3" scope="col">Name</th>
+    <th className="py-4 px-3" scope="col">Image</th>
+    <th className="py-4 px-3" scope="col">Price</th>
+    <th className="py-4 px-3" scope="col">Description</th>
+    <th className="py-4 px-3" scope="col">Category</th>
+        <th className="py-4 px-3" scope="col">Tag</th>
+            <th className="py-4 px-3" scope="col">Action</th>
 
-      <div className="p-4">
 
-        {listRecipes.length > 0 ? (
 
-          <table className="table table-striped table-hover align-middle text-center">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th>Tag</th>
-                <th>Action</th>
-              </tr>
-            </thead>
+  </tr>
+</thead>
+  <tbody> 
+  
+       {recipesList.map(recipe=>
+      <tr key={recipe.id} style={{ height: "65px" }}>
+  <th scope="row" className="py-3 px-3">{recipe.id}</th>
+  
+  <td className="py-3 px-3">{recipe.name}</td>
+  
+  <td>
+  {recipe.imagePath ? (
+    <img classname="table-img" src={`https://upskilling-egypt.com:3006/${recipe.imagePath}`} alt={recipe.name} style={{width:"60px",height:"60px", objectfit:"cover" }} />
+  ) : (
+    <span>No Image</span>
+  )}
+</td>
+    <td className="py-3 px-3">{recipe.price}</td>
+  <td className="py-3 px-3">{recipe.description}</td> 
+   <td className="py-3 px-3">{recipe.category[0]?.name }</td>
+   <td className="py-3 px-3">{recipe.tag?.name }</td>
 
-            <tbody>
-              {listRecipes.map((recipe) => (
-                <tr key={recipe.id}>
-
-                  {/* ID */}
-                  <td>{recipe.id}</td>
-
-                  {/* Image */}
-                  <td>
-                    <img
-                      src={recipe.imgpath}
-                      alt={recipe.name}
-                      width="60"
-                      height="60"
-                      style={{ objectFit: "cover", borderRadius: "8px" }}
-                    />
-                  </td>
-
-                  {/* Name */}
-                  <td>
-                    {editId === recipe.id ? (
-                      <input
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            name: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      recipe.name
-                    )}
-                  </td>
-
-                  {/* Description */}
-                  <td>
-                    {editId === recipe.id ? (
-                      <input
-                        value={formData.description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      recipe.description
-                    )}
-                  </td>
-
-                  {/* Price */}
-                  <td>
-                    {editId === recipe.id ? (
-                      <input
-                        type="number"
-                        value={formData.price}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            price: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      recipe.price
-                    )}
-                  </td>
-
-                  {/* Category */}
-                  <td>
-                    {recipe.category?.length > 0
-                      ? recipe.category[0].name
-                      : "No Category"}
-                  </td>
-
-                  {/* Tag */}
-                  <td>
-                    {recipe.tag?.name || "No Tag"}
-                  </td>
-
-                  {/* Actions */}
-                  <td>
-                    {editId === recipe.id ? (
-                      <>
-                        <button
-                          className="btn btn-success btn-sm mx-1"
-                          onClick={() => {
-                            updateRecipes(editId, formData);
-                            setEditId(null);
-                          }}
-                        >
-                          Save
-                        </button>
-
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => setEditId(null)}
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <i
-                        onClick={() => {
-                          setEditId(recipe.id);
-                          setFormData({
-                            name: recipe.name,
-                            description: recipe.description,
-                            price: recipe.price,
-                          });
-                        }}
-                        className="fa fa-edit text-warning mx-2"
-                        style={{ cursor: "pointer" }}
-                      ></i>
-                    )}
-
-                    <i
-                      onClick={() => deleteRecipes(recipe.id)}
-                      className="fa fa-trash text-danger"
-                      style={{ cursor: "pointer" }}
-                    ></i>
-                  </td>
-
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-        ) : (
-          <NoData />
-        )}
+  <td className="py-3 px-3">
+    <i 
+      className="fa fa-edit text-warning mx-2" 
+      style={{ cursor: "pointer", fontSize: "18px" }}
+    ></i>
+    
+    <i  
+ onClick={() => deleteRecipe(recipe.id)}
+      className="fa fa-trash text-danger" 
+      style={{ cursor: "pointer", fontSize: "18px" }}
+    ></i>
+  </td>
+</tr>
+    )}
+  </tbody>
+</table>:<NoData/>    }
 
       </div>
     </>
+     
   );
 }
