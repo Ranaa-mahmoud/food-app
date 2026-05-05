@@ -3,6 +3,9 @@
   margin: 0;
   box-sizing: border-box;
 }
+body{
+  font-family: "inter",sans-serif;
+}
 /* input auth login */
 .auth-container {
   background-image: url('/src/assets/images/auth-bg.png');
@@ -74,3 +77,5 @@
 thead th {
   padding: 20px 15px; /* زودي الرقم حسب ما تحبي */
 }
+
+

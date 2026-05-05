@@ -8,7 +8,6 @@ export default function RecipesList() {
 
  const[recipesList,setRecipesList]=useState([]);
 
-  // get category
   const getList=async()=>{
     try{
       const response= await getRecipes()
