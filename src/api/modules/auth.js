@@ -3,7 +3,7 @@ import axiosClient from "../axiosClient";
 export const login = (data) => {
   return axiosClient.post("/Users/Login", data);
 };
-export const register = (data) => {
+export const registerUser = (data) => {
   return axiosClient.post("/Users/Register", data);
 };
 export const verify = (data) => {

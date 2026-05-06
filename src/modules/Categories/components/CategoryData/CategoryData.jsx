@@ -51,17 +51,17 @@ export default function CategoryData() {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="p-5">
       <div className="card p-4 shadow-sm">
         <h4 className="mb-3">
           {isEditMode ? "Edit Category" : "Create Category"}
         </h4>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="p-5">
+          <div className="mb-5 ">
             <input
               type="text"
-              className="form-control"
+              className="form-control "
               placeholder="Category Name"
               {...register("name", {
                 required: "Category name is required",

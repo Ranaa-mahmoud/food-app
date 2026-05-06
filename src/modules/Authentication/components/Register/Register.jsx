@@ -1,8 +1,12 @@
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { registerUser } from "../../../../api/modules/auth";
 
 export default function Register() {
-  let {
+  const navigate = useNavigate();
+
+  const {
     register,
     handleSubmit,
     watch,
@@ -11,8 +15,17 @@ export default function Register() {
 
   const password = watch("password");
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+       await registerUser(data);
+
+      toast.success("success register");
+
+      navigate("/verify-account");
+
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong");
+    }
   };
 
   return (
@@ -27,6 +40,7 @@ export default function Register() {
       <form onSubmit={handleSubmit(onSubmit)} className="my-4">
         <div className="container">
           <div className="row">
+            {/* Left side */}
             <div className="col-md-6">
               <div className="custom-input mb-3">
                 <i className="fa-solid fa-user"></i>
@@ -40,7 +54,6 @@ export default function Register() {
                   })}
                 />
               </div>
-
               {errors.userName && (
                 <span className="text-danger">{errors.userName.message}</span>
               )}
@@ -57,7 +70,6 @@ export default function Register() {
                   })}
                 />
               </div>
-
               {errors.country && (
                 <span className="text-danger">{errors.country.message}</span>
               )}
@@ -78,12 +90,12 @@ export default function Register() {
                   })}
                 />
               </div>
-
               {errors.password && (
                 <span className="text-danger">{errors.password.message}</span>
               )}
             </div>
 
+            {/* Right side */}
             <div className="col-md-6">
               <div className="custom-input mb-3">
                 <i className="fa-solid fa-envelope"></i>
@@ -101,7 +113,6 @@ export default function Register() {
                   })}
                 />
               </div>
-
               {errors.email && (
                 <span className="text-danger">{errors.email.message}</span>
               )}
@@ -113,12 +124,11 @@ export default function Register() {
                 <input
                   type="text"
                   placeholder="Phone Number"
-                  {...register("phone", {
+                  {...register("phoneNumber", {
                     required: "Field is Required",
                   })}
                 />
               </div>
-
               {errors.phone && (
                 <span className="text-danger">{errors.phone.message}</span>
               )}
@@ -137,7 +147,6 @@ export default function Register() {
                   })}
                 />
               </div>
-
               {errors.confirmPassword && (
                 <span className="text-danger">
                   {errors.confirmPassword.message}
@@ -146,6 +155,7 @@ export default function Register() {
             </div>
           </div>
 
+          {/* Links */}
           <div className="links my-4 d-flex justify-content-between">
             <Link
               to="/login"
@@ -155,6 +165,7 @@ export default function Register() {
             </Link>
           </div>
 
+          {/* Submit */}
           <button className="btn btn-success w-100 text-white fw-bold rounded-2">
             Register
           </button>

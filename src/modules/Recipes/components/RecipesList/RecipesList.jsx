@@ -10,7 +10,7 @@ import photoModel from "/src/assets/images/delete-model.svg";
 import { useNavigate } from "react-router-dom";
 
 export default function RecipesList() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const [recipesList, setRecipesList] = useState([]);
   const [show, setShow] = useState(false);
   const [recipeId, setRecipeId] = useState(0);
@@ -156,9 +156,9 @@ export default function RecipesList() {
                   <td className="py-3 px-3">{recipe.tag?.name}</td>
                   <td className="py-3 px-3">
                     <i
-                      onClick={() =>
-                        navigate(`/dashboard/recipe-data/${recipe.id}`)
-                      }
+                     
+                                onClick={() => navigate("/dashboard/recipe-data")}
+
                       className="fa fa-edit text-warning mx-2"
                       style={{ cursor: "pointer", fontSize: "18px" }}
                     ></i>

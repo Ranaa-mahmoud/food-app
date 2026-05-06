@@ -109,7 +109,7 @@ export default function RecipeData() {
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className=" w-75 m-auto bg-info p-3 "
+        className=" w-75 m-auto p-3 "
       >
         <div className=" input-group my-2">
           <input

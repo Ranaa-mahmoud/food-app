@@ -1,7 +1,10 @@
 import { useForm } from "react-hook-form";
 import { verify } from "/src/api/modules/auth.js"; // عدّل المسار حسب مشروعك
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function VerifyAccount() {
+  const navigate=useNavigate()
   let {
     register,
     handleSubmit,
@@ -10,10 +13,13 @@ export default function VerifyAccount() {
 
   const onSubmit = async (data) => {
     try {
-      const res = await verify(data);
-      console.log(res.data);
+     const response=await verify(data);
+      toast.success(response?.data?.message ||'Success Verify')
+            navigate("/login");
+
     } catch (error) {
-      console.log(error);
+            toast.error(error?.response?.data?.message || "Something went wrong");
+      
     }
   };
 
@@ -55,7 +61,7 @@ export default function VerifyAccount() {
           <input
             type="text"
             placeholder="OTP"
-            {...register("seed", {
+            {...register("code", {
               required: "OTP is required",
             })}
           />
