@@ -35,6 +35,7 @@ export default function ChangePass({ show, handleClose }) {
           onSubmit={handleSubmit(onSubmit)}
           className="d-flex flex-column gap-3 px-5 mt-3"
         >
+        <input type="text" name="username" autoComplete="username" hidden />
           {/* OLD PASSWORD */}
           <div className="custom-input my-3">
             <i className="fa-solid fa-lock"></i>
