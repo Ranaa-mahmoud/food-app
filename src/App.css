@@ -73,9 +73,6 @@ body{
   background-color: rgba(0, 146, 77, 0.1) !important;
   border-left: 4px solid rgba(0,146,71, 1);
 }
-/* end sidebar */
-thead th {
-  padding: 20px 15px; /* زودي الرقم حسب ما تحبي */
+.recipe-header{
+  background-color:rgb(240, 255, 239) ;
 }
-
-

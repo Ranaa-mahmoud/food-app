@@ -4,15 +4,15 @@ export const getCategories = () => {
   return axiosClient.get("/Category");
 };
 
-export const GetCategoryById = (id) => {
+export const getCategoryById = (id) => {
   return axiosClient.get(`/Category/${id}`);
 };
 
-export const CreateCategory = (data) => {
+export const createCategory = (data) => {
   return axiosClient.post("/Category", data);
 };
 
-export const UpdateCategory = (id, data) => {
+export const updateCategory = (id, data) => {
   return axiosClient.put(`/Category/${id}`, data);
 };
 

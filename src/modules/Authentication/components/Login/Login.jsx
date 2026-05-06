@@ -2,11 +2,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axiosClient from "../../../../api/axiosClient";
+import { login } from "../../../../api/modules/auth";
 
-
-export default function Login({saveLoginData}) {
-  
+export default function Login({ saveLoginData }) {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -18,10 +16,10 @@ export default function Login({saveLoginData}) {
 
   const onSubmit = async (data) => {
     try {
-      let response = await axiosClient.post("/Users/Login",data);
-localStorage.setItem("token", response.data?.token);
-     toast.success("Login successful 🎉");
-       saveLoginData()
+      let response = await login(data);
+      localStorage.setItem("token", response.data?.token);
+      toast.success("Login successful 🎉");
+      saveLoginData();
       navigate("/dashboard");
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed ❌");
@@ -38,7 +36,6 @@ localStorage.setItem("token", response.data?.token);
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="my-4">
-        {/* EMAIL */}
         <div className="custom-input">
           <i className="fa-solid fa-envelope"></i>
           <span className="divider"></span>
@@ -77,8 +74,7 @@ localStorage.setItem("token", response.data?.token);
               required: "field is requierd",
               pattern: {
                 value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/,
-                message:
-                  "Password must be at least 8 characters",
+                message: "Password must be at least 8 characters",
               },
             })}
           />
@@ -110,7 +106,6 @@ localStorage.setItem("token", response.data?.token);
           </Link>
         </div>
 
-        {/* BUTTON */}
         <button
           className="btn btn-success w-100 text-white fw-bold rounded-2"
           type="submit"

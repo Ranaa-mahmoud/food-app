@@ -1,8 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axiosClient from "../../../../api/axiosClient";
-
+import { forget } from "../../../../api/modules/auth";
 export default function ForgetPass() {
   const navigate = useNavigate();
 
@@ -13,7 +12,7 @@ export default function ForgetPass() {
   } = useForm();
   const onSubmit = async (data) => {
     try {
-      await axiosClient.post("/Reset/Request",data);
+      await forget(data);
       navigate("/reset-pass");
 
       toast.success("Reset link sent to your email ");

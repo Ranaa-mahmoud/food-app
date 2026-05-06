@@ -1,35 +1,39 @@
-import { useForm } from "react-hook-form"
-import Register from './../Register/Register';
+import { useForm } from "react-hook-form";
+import { verify } from "/src/api/modules/auth.js"; // عدّل المسار حسب مشروعك
 
 export default function VerifyAccount() {
-   let {
+  let {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const onSubmit = async (data) => {
+    try {
+      const res = await verify(data);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-      <div>
+    <div>
       <div className="header">
-        <h3 className="h4 fw-bold "> Verify Account  
-</h3>
+        <h3 className="h4 fw-bold">Verify Account</h3>
         <span className="text-muted">
-        Please Enter Your Otp  or Check Your Inbox
+          Please enter your OTP or check your inbox
         </span>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="my-4">
-        {/* EMAIL */}
         <div className="custom-input">
           <i className="fa-solid fa-envelope"></i>
           <span className="divider"></span>
 
           <input
             type="email"
-            id="email"
-            autoComplete="email"
             placeholder="Enter your email"
-            aria-describedby="emailelplBlock"
             {...register("email", {
               required: "Field is Required",
               pattern: {
@@ -44,11 +48,7 @@ export default function VerifyAccount() {
           <span className="text-danger">{errors.email.message}</span>
         )}
 
-
-
-
-          {/* OTP */}
-        <div className="custom-input">
+        <div className="custom-input mt-3">
           <i className="fa-solid fa-lock"></i>
           <span className="divider"></span>
 
@@ -60,16 +60,18 @@ export default function VerifyAccount() {
             })}
           />
         </div>
+
         {errors.seed && (
           <span className="text-danger">{errors.seed.message}</span>
         )}
-         <button
-          className="btn btn-success w-100 text-white fw-bold rounded-2 my-1"
+
+        <button
+          className="btn btn-success w-100 text-white fw-bold rounded-2 my-3"
           type="submit"
         >
-        Send
+          Verify
         </button>
-</form>
-</div>
-  )
+      </form>
+    </div>
+  );
 }

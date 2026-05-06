@@ -2,10 +2,10 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import axiosClient from "../../../../api/axiosClient";
+import { reset } from "../../../../api/modules/auth";
 
 export default function ResetPass() {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -17,13 +17,10 @@ export default function ResetPass() {
 
   const onSubmit = async (data) => {
     try {
-      let response = await axiosClient.post(
-        "/Users/Reset",
-        data,
-      );
+      let response = await reset(data);
 
       toast.success(response.data.message);
-      navigate('/login')
+      navigate("/login");
     } catch (error) {
       toast.error(error.response?.data?.message || "Something went wrong ❌");
     }
@@ -39,7 +36,6 @@ export default function ResetPass() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="my-4">
-        {/* EMAIL */}
         <div className="custom-input">
           <i className="fa-solid fa-envelope"></i>
           <span className="divider"></span>
@@ -61,7 +57,6 @@ export default function ResetPass() {
           <span className="text-danger">{errors.email.message}</span>
         )}
 
-        {/* OTP */}
         <div className="custom-input">
           <i className="fa-solid fa-lock"></i>
           <span className="divider"></span>
@@ -77,7 +72,6 @@ export default function ResetPass() {
         {errors.seed && (
           <span className="text-danger">{errors.seed.message}</span>
         )}
-        {/* NEW PASSWORD */}
         <div className="custom-input">
           <i className="fa-solid fa-lock"></i>
           <span className="divider"></span>
@@ -105,7 +99,6 @@ export default function ResetPass() {
           <span className="text-danger">{errors.password.message}</span>
         )}
 
-        {/* CONFIRM PASSWORD */}
         <div className="custom-input">
           <i className="fa-solid fa-lock"></i>
           <span className="divider"></span>

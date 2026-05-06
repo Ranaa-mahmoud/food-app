@@ -3,7 +3,7 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import photo from "/src/assets/images/3.png";
 import { useState } from "react";
 
-export default function SideBar({ setLoginData }) {
+export default function SideBar({ setLoginData ,onOpenChangePass  }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -53,7 +53,8 @@ export default function SideBar({ setLoginData }) {
           </MenuItem>
           <MenuItem
             icon={<i className="fa-solid fa-lock"></i>}
-            component={<Link to="/dashboard/Change-Pass" />}
+              onClick={onOpenChangePass}
+
           >
             change password
           </MenuItem>

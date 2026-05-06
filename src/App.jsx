@@ -22,17 +22,16 @@ import ProtectedRoute from "./modules/Shared/components/ProtectedRoute/Protected
 import ChangePass from "./modules/Authentication/components/ChangePass/ChangePass";
 
 function App() {
-  const [loginData,setLoginData]=useState(null);
-  const saveLoginData=()=>{
-    let endecodedToken=localStorage.getItem("token")
-    let decodedToken=jwtDecode(endecodedToken)
-    setLoginData(decodedToken)
-  }
-  useEffect(()=>{
-   if(localStorage.getItem('token'))
-    saveLoginData()
-  },[])
-  
+  const [loginData, setLoginData] = useState(null);
+  const saveLoginData = () => {
+    let endecodedToken = localStorage.getItem("token");
+    let decodedToken = jwtDecode(endecodedToken);
+    setLoginData(decodedToken);
+  };
+  useEffect(() => {
+    if (localStorage.getItem("token")) saveLoginData();
+  }, []);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -49,29 +48,31 @@ function App() {
     },
     {
       path: "dashboard",
-      element: <ProtectedRoute loginData={loginData} ><MasterLayout loginData={loginData} setLoginData={setLoginData} /></ProtectedRoute>,
+      element: (
+        <ProtectedRoute loginData={loginData}>
+          <MasterLayout loginData={loginData} setLoginData={setLoginData} />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Dashboard loginData={loginData} /> },
-        { path: "", element: <Dashboard loginData={loginData}/> },
+        { path: "", element: <Dashboard loginData={loginData} /> },
         { path: "recipes", element: <RecipesList /> },
         { path: "recipe-data", element: <RecipeData /> },
         { path: "categories", element: <CategoryList /> },
+        { path: "categories/edit/:id", element: <CategoryData /> },
         { path: "user", element: <UsersList /> },
         { path: "favourites", element: <FavList /> },
-                { path: "Change-Pass", element: <ChangePass /> },
-
+        { path: "Change-Pass", element: <ChangePass /> },
       ],
     },
   ]);
   return (
-<>
-    <RouterProvider router={router}></RouterProvider>  
-          <ToastContainer />
-</>
-
-
-);
+    <>
+      <RouterProvider router={router}></RouterProvider>
+      <ToastContainer />
+    </>
+  );
 }
 
 export default App;
