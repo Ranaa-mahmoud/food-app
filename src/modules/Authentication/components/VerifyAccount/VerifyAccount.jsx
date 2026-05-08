@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { verify } from "/src/api/modules/auth.js"; // عدّل المسار حسب مشروعك
+import { verify } from "/src/api/modules/auth.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 

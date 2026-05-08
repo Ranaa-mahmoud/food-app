@@ -1,23 +1,52 @@
 import Header from "../../../Shared/components/Header/Header";
 import photo from "/src/assets/images/header.png";
 import noData from "/src/assets/images/no-data.png";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NoData from "../../../Shared/components/NoData/NoData";
 import { deleteRecipes, getRecipes } from "../../../../api/modules/Recipes";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import photoModel from "/src/assets/images/delete-model.svg";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../../context/AuthContext";
+import { toast } from "react-toastify";
+import { addFavoriteRecipe } from "../../../../api/modules/userRecipe";
 
 export default function RecipesList() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { loginData } = useContext(AuthContext);
+
   const [recipesList, setRecipesList] = useState([]);
-  const [show, setShow] = useState(false);
-  const [recipeId, setRecipeId] = useState(0);
-  const handleClose = () => setShow(false);
-  const handleShow = (id) => {
+
+  // delete modal
+  const [showDelete, setShowDelete] = useState(false);
+  const [recipeId, setRecipeId] = useState(null);
+
+  // view modal
+  const [showView, setShowView] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  const handleShowDelete = (id) => {
     setRecipeId(id);
-    setShow(true);
+    setShowDelete(true);
+  };
+
+  const handleCloseDelete = () => setShowDelete(false);
+
+  const handleShowView = (recipe) => {
+    setSelectedRecipe(recipe);
+    setShowView(true);
+  };
+
+  const handleCloseView = () => setShowView(false);
+
+  const addToFavs = async (id) => {
+    try {
+      await addFavoriteRecipe({ recipeId: id });
+      toast.success("Added to favorites successfully");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to add to favorites");
+    }
   };
 
   const getList = async () => {
@@ -28,10 +57,11 @@ export default function RecipesList() {
       console.log(error);
     }
   };
+
   const deleteRecipe = async (id) => {
     try {
       await deleteRecipes(id);
-      setRecipesList((prev) => prev.filter((recipe) => recipe.id !== id));
+      setRecipesList((prev) => prev.filter((r) => r.id !== id));
     } catch (error) {
       console.log(error);
     }
@@ -50,24 +80,27 @@ export default function RecipesList() {
         }
         imgUrl={photo}
       />
-      <Modal show={show} onHide={handleClose}>
+
+      {/* DELETE MODAL */}
+      <Modal show={showDelete} onHide={handleCloseDelete}>
         <Modal.Header closeButton>
           <Modal.Title>Modal heading</Modal.Title>
         </Modal.Header>
+
         <Modal.Body className="text-center ">
           <img src={photoModel} alt="photoModel" className="m-3 img-fluid" />
           <h5 className="my-2 ">Delete This Category ?</h5>
-          <p className=" text-muted">
-            are you sure you want to delete this item ? if you are sure just
-            click on delete it
+          <p className="text-muted">
+            are you sure you want to delete this item ? if you are sure just click on delete it
           </p>
         </Modal.Body>
+
         <Modal.Footer>
           <Button
-            variant=" btn-outline-danger "
+            variant="btn-outline-danger"
             onClick={async () => {
               await deleteRecipe(recipeId);
-              handleClose();
+              handleCloseDelete();
             }}
           >
             Delete this item
@@ -75,99 +108,138 @@ export default function RecipesList() {
         </Modal.Footer>
       </Modal>
 
-      <div className="px-5 py-3 d-flex justify-content-between justify-content-center align-items-center">
-        <div>
-          <h4>Recipe Table Details</h4>
-          <span>You can check all details</span>
-        </div>
-        <button
-          className="btn btn-success"
-          onClick={() => navigate("/dashboard/recipe-data")}
-        >
-          Add New Item
-        </button>
-      </div>
+      {/* VIEW MODAL */}
+      <Modal show={showView} onHide={handleCloseView} centered>
+        <Modal.Header closeButton >
+          <Modal.Title className="text-success fw-bold rounded-3">Recipe Details</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body >
+
+          <div className="text-center mb-3">
+            <img
+              src={
+                selectedRecipe?.imagePath
+                  ? `https://upskilling-egypt.com:3006/${selectedRecipe.imagePath}`
+                  : noData
+              }
+              alt="recipe"
+              style={{
+                width: "400px",
+                height: "200px",
+                objectFit: "cover",
+                borderRadius: "12px",
+              }}
+            />
+          </div>
+
+          <h4 className="text-center mb-2 fw-bold">{selectedRecipe?.name}</h4>
+
+          <p className="text-muted text-center">
+            {selectedRecipe?.description}
+          </p>
+
+          <div className="p-3 rounded text-white" style={{ background: "#106207" }}>
+            <div className="d-flex justify-content-between mb-2">
+              <strong>Price:</strong>
+              <span>{selectedRecipe?.price}</span>
+            </div>
+
+            <div className="d-flex justify-content-between mb-2">
+              <strong>Category:</strong>
+              <span>{selectedRecipe?.category?.[0]?.name}</span>
+            </div>
+
+            <div className="d-flex justify-content-between">
+              <strong>Tag:</strong>
+              <span>{selectedRecipe?.tag?.name}</span>
+            </div>
+          </div>
+
+        </Modal.Body>
+
+        <Modal.Footer className="d-flex justify-content-between">
+
+          <Button variant=" btn btn-outline-success"
+            onClick={() => addToFavs(selectedRecipe?.id)}
+          >
+            <i className="fa fa-heart me-2 text-danger"></i>
+            Add to Favorite
+          </Button>
+
+        
+        </Modal.Footer>
+      </Modal>
+
+      {/* TABLE (UNCHANGED EXACTLY) */}
       <div className="px-5 py-3 ">
         {recipesList.length > 0 ? (
           <table className="table table-striped table-responsive text-center">
             <thead className="table-light  fs-5">
               <tr style={{ height: "50px" }}>
-                <th className="py-4 px-3" scope="col">
-                  #
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Name
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Image
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Price
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Description
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Category
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Tag
-                </th>
-                <th className="py-4 px-3" scope="col">
-                  Action
-                </th>
+                <th className="py-4 px-3" scope="col">#</th>
+                <th className="py-4 px-3" scope="col">Name</th>
+                <th className="py-4 px-3" scope="col">Image</th>
+                <th className="py-4 px-3" scope="col">Price</th>
+                <th className="py-4 px-3" scope="col">Description</th>
+                <th className="py-4 px-3" scope="col">Category</th>
+                <th className="py-4 px-3" scope="col">Tag</th>
+                <th className="py-4 px-3" scope="col">Action</th>
               </tr>
             </thead>
+
             <tbody>
               {recipesList.map((recipe) => (
                 <tr key={recipe.id} style={{ height: "65px" }}>
-                  <th scope="row" className="py-3 px-3">
-                    {recipe.id}
-                  </th>
+                  <th className="py-3 px-3">{recipe.id}</th>
 
                   <td className="py-3 px-3">{recipe.name}</td>
 
                   <td>
-                    {recipe.imagePath ? (
-                      <img
-                        className="table-img"
-                        src={`https://upskilling-egypt.com:3006/${recipe.imagePath}`}
-                        alt={recipe.name}
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectfit: "cover",
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={noData}
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectfit: "cover",
-                        }}
-                      />
-                    )}
+                    <img
+                      src={
+                        recipe.imagePath
+                          ? `https://upskilling-egypt.com:3006/${recipe.imagePath}`
+                          : noData
+                      }
+                      style={{
+                        width: "100%",
+                        maxWidth: "100px",
+                        height: "50px",
+                        objectFit: "cover",
+                      }}
+                      alt="img recipe"
+                    />
                   </td>
+
                   <td className="py-3 px-3">{recipe.price}</td>
                   <td className="py-3 px-3">{recipe.description}</td>
                   <td className="py-3 px-3">{recipe.category[0]?.name}</td>
                   <td className="py-3 px-3">{recipe.tag?.name}</td>
-                  <td className="py-3 px-3">
-                    <i
-                     
-                                onClick={() => navigate("/dashboard/recipe-data")}
 
-                      className="fa fa-edit text-warning mx-2"
-                      style={{ cursor: "pointer", fontSize: "18px" }}
-                    ></i>
-                    <i
-                      onClick={() => handleShow(recipe.id)}
-                      //  onClick={() => deleteRecipe(recipe.id)}
-                      className="fa fa-trash text-danger"
-                      style={{ cursor: "pointer", fontSize: "18px" }}
-                    ></i>
+                  <td className="py-3 px-3">
+
+                    {loginData?.userGroup === "SystemUser" ? (
+                      <i
+                        className="fa fa-eye text-success mx-2"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleShowView(recipe)}
+                      ></i>
+                    ) : (
+                      <>
+                        <i
+                          className="fa fa-edit text-warning mx-2"
+                          style={{ cursor: "pointer" }}
+                        ></i>
+
+                        <i
+                          className="fa fa-trash text-danger"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleShowDelete(recipe.id)}
+                        ></i>
+                      </>
+                    )}
+
                   </td>
                 </tr>
               ))}

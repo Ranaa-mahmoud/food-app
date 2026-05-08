@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { login } from "../../../../api/modules/auth";
+import { AuthContext } from './../../../../context/AuthContext';
 
-export default function Login({ saveLoginData }) {
+export default function Login() {
   const navigate = useNavigate();
+  const {saveLoginData}=useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
+
 
   let {
     register,

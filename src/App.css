@@ -1,14 +1,16 @@
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
+  box-sizing: border-box; 
+  overflow: hidden;
 }
-body{
-  font-family: "inter",sans-serif;
+
+body {
+  font-family: "inter", sans-serif;
 }
 /* input auth login */
 .auth-container {
-  background-image: url('/src/assets/images/auth-bg.png');
+  background-image: url("/src/assets/images/auth-bg.png");
   background-position: center center;
   background-size: cover;
 }
@@ -19,7 +21,7 @@ body{
     rgba(0, 0, 0, 0.8)
   );
 }
-.header-bg{
+.header-bg {
   background-image: url(./assets/images/header-bg-svg.svg);
   background-size: cover;
 }
@@ -59,20 +61,19 @@ body{
 /* input auth login */
 
 /*  start sidebar  */
-.ps-sidebar .ps-sidebar-container{
+.ps-sidebar .ps-sidebar-container {
   background-color: #1f263e;
-  height: 100vh;  
-  border-top-right-radius:58px ;
+  border-top-right-radius: 58px;
 
 }
-.ps-sidebar .ps-menu-button{
+.ps-sidebar .ps-menu-button {
   color: #fff !important;
   transition: all 1s;
 }
-.ps-sidebar .ps-menu-button:hover{
+.ps-sidebar .ps-menu-button:hover {
   background-color: rgba(0, 146, 77, 0.1) !important;
-  border-left: 4px solid rgba(0,146,71, 1);
+  border-left: 4px solid rgba(0, 146, 71, 1);
 }
-.recipe-header{
-  background-color:rgb(240, 255, 239) ;
+.recipe-header {
+  background-color: rgb(240, 255, 239);
 }

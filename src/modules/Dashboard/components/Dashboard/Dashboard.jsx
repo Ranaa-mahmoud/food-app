@@ -1,16 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import Header from "../../../Shared/components/Header/Header";
 import photo from "/src/assets/images/header-girl.png";
+import { useContext } from "react";
+import { AuthContext } from "../../../../context/AuthContext";
 
-export default function Dashboard({ loginData }) {
-  const navigate=useNavigate()
+export default function Dashboard() {
+  const navigate = useNavigate();
+  const { loginData } = useContext(AuthContext);
   return (
     <>
-        <Header
-      title={`Welcomen ${loginData?.userName}`}
-      description="This is a welcoming screen for the entry of the application, you can now see the options"
-      imgUrl={photo}
-    />
+      <Header
+        title={`Welcomen ${loginData?.userName}`}
+        description="This is a welcoming screen for the entry of the application, you can now see the options"
+        imgUrl={photo}
+      />
       <div className="container my-4 px-5 py-4">
         <div className="px-5 py-3 recipe-header rounded-3 d-flex justify-content-between align-items-center">
           <div>
@@ -32,6 +35,5 @@ export default function Dashboard({ loginData }) {
         </div>
       </div>
     </>
-  
   );
 }

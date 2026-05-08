@@ -16,30 +16,18 @@ import CategoryData from "./modules/Categories/components/CategoryData/CategoryD
 import UsersList from "./modules/Users/components/UsersList/UsersList";
 import FavList from "./modules/Favourites/components/FavList/FavList";
 import { ToastContainer } from "react-toastify";
-import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
 import ProtectedRoute from "./modules/Shared/components/ProtectedRoute/ProtectedRoute";
 import ChangePass from "./modules/Authentication/components/ChangePass/ChangePass";
 
 function App() {
-  const [loginData, setLoginData] = useState(null);
-  const saveLoginData = () => {
-    let endecodedToken = localStorage.getItem("token");
-    let decodedToken = jwtDecode(endecodedToken);
-    setLoginData(decodedToken);
-  };
-  useEffect(() => {
-    if (localStorage.getItem("token")) saveLoginData();
-  }, []);
-
   const router = createBrowserRouter([
     {
       path: "/",
       element: <AuthLayout />,
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login saveLoginData={saveLoginData} /> },
-        { path: "login", element: <Login saveLoginData={saveLoginData} /> },
+        { index: true, element: <Login /> },
+        { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
         { path: "verify-account", element: <VerifyAccount /> },
         { path: "forget-pass", element: <ForgetPass /> },
@@ -49,14 +37,14 @@ function App() {
     {
       path: "dashboard",
       element: (
-        <ProtectedRoute loginData={loginData}>
-          <MasterLayout loginData={loginData} setLoginData={setLoginData} />
+        <ProtectedRoute>
+          <MasterLayout />
         </ProtectedRoute>
       ),
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Dashboard loginData={loginData} /> },
-        { path: "", element: <Dashboard loginData={loginData} /> },
+        { index: true, element: <Dashboard /> },
+        { path: "", element: <Dashboard /> },
         { path: "recipes", element: <RecipesList /> },
         { path: "recipe-data", element: <RecipeData /> },
         { path: "categories", element: <CategoryList /> },
