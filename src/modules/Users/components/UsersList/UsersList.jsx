@@ -5,6 +5,7 @@ import photoModel from "/src/assets/images/delete-model.svg";
 import { Modal, Button } from "react-bootstrap";
 import { deleteUser, getUsers } from "../../../../api/modules/user";
 import NoData from "../../../Shared/components/NoData/NoData";
+import { toast } from "react-toastify";
 
 export default function UsersList() {
   const [userLists, setUserLists] = useState([]);
@@ -20,17 +21,19 @@ export default function UsersList() {
     try {
       let response = await getUsers();
       setUserLists(response?.data?.data || []);
+      toast("Users fetched successfully", { type: "success" });
     } catch (error) {
-      console.log(error);
+      toast(error?.response?.data?.message || "Failed to fetch users", { type: "error" });
     }
   };
 
   const deleteUserById = async (id) => {
     try {
-      await deleteUser(id);
+      let response=await deleteUser(id);
       setUserLists((prev) => prev.filter((user) => user.id !== id));
+      toast(response?.data?.message || "User deleted successfully", { type: "success" });
     } catch (error) {
-      console.log(error);
+     toast( error?.response?.data?.message || "Failed to delete user", { type: "error" });
     }
   };
 
