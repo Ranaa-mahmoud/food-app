@@ -1,7 +1,10 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
 import photo from "/src/assets/images/Group.svg";
+import { changePassword } from "../../../../api/modules/auth";
+import { toast } from "react-toastify";
 
 export default function ChangePass({ show, handleClose }) {
   const {
@@ -13,8 +16,21 @@ export default function ChangePass({ show, handleClose }) {
 
   const newPassword = watch("newPassword");
 
-  const onSubmit = (data) => {
-    console.log(data);
+  // ================= SHOW PASSWORD STATES =================
+  const [showOld, setShowOld] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  const onSubmit =async (data) => {
+    try {
+
+  const response = await changePassword(data);
+  console.log(response);
+  toast.success("Password changed successfully");
+  handleClose();
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to change password");
+    }
   };
 
   return (
@@ -35,68 +51,89 @@ export default function ChangePass({ show, handleClose }) {
           onSubmit={handleSubmit(onSubmit)}
           className="d-flex flex-column gap-3 px-5 mt-3"
         >
-        <input type="text" name="username" autoComplete="username" hidden />
-          {/* OLD PASSWORD */}
-          <div className="custom-input my-3">
-            <i className="fa-solid fa-lock"></i>
-            <span className="divider"></span>
+          <input type="text" name="username" autoComplete="username" hidden />
 
-            <input
-              type="password"
-              placeholder="Old Password"
-              autoComplete="current-password"
-              {...register("oldPassword", {
-                required: "Required",
-              })}
-            />
+          {/* ================= OLD PASSWORD ================= */}
+          <div className="custom-input my-3 d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center w-100">
+              <i className="fa-solid fa-lock"></i>
+              <span className="divider"></span>
+
+              <input
+                type={showOld ? "text" : "password"}
+                placeholder="Old Password"
+                autoComplete="current-password"
+                {...register("oldPassword", {
+                  required: "Required",
+                })}
+              />
+            </div>
+
+            <i
+              className={`fa ${showOld ? "fa-eye-slash" : "fa-eye"}`}
+              onClick={() => setShowOld(!showOld)}
+              style={{ cursor: "pointer" }}
+            ></i>
           </div>
 
           {errors.oldPassword && (
-            <span className="text-danger">
-              {errors.oldPassword.message}
-            </span>
+            <span className="text-danger">{errors.oldPassword.message}</span>
           )}
 
-          {/* NEW PASSWORD */}
-          <div className="custom-input my-3">
-            <i className="fa-solid fa-lock"></i>
-            <span className="divider"></span>
+          {/* ================= NEW PASSWORD ================= */}
+          <div className="custom-input my-3 d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center w-100">
+              <i className="fa-solid fa-lock"></i>
+              <span className="divider"></span>
 
-            <input
-              type="password"
-              placeholder="New Password"
-              autoComplete="new-password"
-              {...register("newPassword", {
-                required: "Required",
-                minLength: {
-                  value: 8,
-                  message: "Min 8 characters",
-                },
-              })}
-            />
+              <input
+                type={showNew ? "text" : "password"}
+                placeholder="New Password"
+                autoComplete="new-password"
+                {...register("newPassword", {
+                  required: "Required",
+                  minLength: {
+                    value: 8,
+                    message: "Min 8 characters",
+                  },
+                })}
+              />
+            </div>
+
+            <i
+              className={`fa ${showNew ? "fa-eye-slash" : "fa-eye"}`}
+              onClick={() => setShowNew(!showNew)}
+              style={{ cursor: "pointer" }}
+            ></i>
           </div>
 
           {errors.newPassword && (
-            <span className="text-danger">
-              {errors.newPassword.message}
-            </span>
+            <span className="text-danger">{errors.newPassword.message}</span>
           )}
 
-          {/* CONFIRM PASSWORD */}
-          <div className="custom-input my-3">
-            <i className="fa-solid fa-lock"></i>
-            <span className="divider"></span>
+          {/* ================= CONFIRM PASSWORD ================= */}
+          <div className="custom-input my-3 d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center w-100">
+              <i className="fa-solid fa-lock"></i>
+              <span className="divider"></span>
 
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              autoComplete="new-password"
-              {...register("confirmPassword", {
-                required: "Required",
-                validate: (value) =>
-                  value === newPassword || "Passwords do not match",
-              })}
-            />
+              <input
+                type={showConfirm ? "text" : "password"}
+                placeholder="Confirm Password"
+                autoComplete="new-password"
+                {...register("confirmPassword", {
+                  required: "Required",
+                  validate: (value) =>
+                    value === newPassword || "Passwords do not match",
+                })}
+              />
+            </div>
+
+            <i
+              className={`fa ${showConfirm ? "fa-eye-slash" : "fa-eye"}`}
+              onClick={() => setShowConfirm(!showConfirm)}
+              style={{ cursor: "pointer" }}
+            ></i>
           </div>
 
           {errors.confirmPassword && (
@@ -105,6 +142,7 @@ export default function ChangePass({ show, handleClose }) {
             </span>
           )}
 
+          {/* ================= BUTTON ================= */}
           <button className="btn btn-success w-100 mt-3">
             Change Password
           </button>

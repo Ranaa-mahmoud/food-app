@@ -44,14 +44,18 @@ function App() {
       errorElement: <NotFound />,
       children: [
         { index: true, element: <Dashboard /> },
-        { path: "", element: <Dashboard /> },
-        { path: "recipes", element: <RecipesList /> },
-        { path: "recipe-data", element: <RecipeData /> },
-        { path: "categories", element: <CategoryList /> },
-        { path: "categories/edit/:id", element: <CategoryData /> },
-        { path: "user", element: <UsersList /> },
-        { path: "favourites", element: <FavList /> },
-        { path: "Change-Pass", element: <ChangePass /> },
+
+  { path: "recipes", element: <RecipesList /> },
+  { path: "recipe-data", element: <RecipeData /> },
+
+  { path: "recipes/view/:id", element: <RecipeData /> },
+  { path: "recipes/edit/:id", element: <RecipeData /> },
+
+  { path: "categories", element: <CategoryList /> },
+  { path: "categories/edit/:id", element: <CategoryData /> },
+
+  { path: "user", element: <UsersList /> },
+  { path: "favourites", element: <FavList /> }
       ],
     },
   ]);

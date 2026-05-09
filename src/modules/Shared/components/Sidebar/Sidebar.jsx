@@ -10,7 +10,7 @@ export default function SideBar({ onOpenChangePass }) {
   const navigate = useNavigate();
 
   const toggleCollapse = () => {
-    setIsCollapsed(prev => !prev);
+    setIsCollapsed((prev) => !prev);
   };
 
   const logOut = () => {
@@ -18,25 +18,19 @@ export default function SideBar({ onOpenChangePass }) {
     navigate("/login");
   };
 
-  // ⬅️ حماية من undefined + تبسيط الشرط
   const userGroup = loginData?.userGroup;
   const isSystemUser = userGroup === "SystemUser";
 
-  // ⬅️ منع render قبل تحميل البيانات (يمنع ظهور خاطئ)
   if (!loginData) return null;
 
   return (
-    <div className="ps-sidebar">
+    <div className=" ps-sidebar ">
       <Sidebar collapsed={isCollapsed}>
-
-        {/* Logo / toggle */}
         <div onClick={toggleCollapse} className="my-4 text-center">
           <img className="img-fluid" src={photo} alt="logo" />
         </div>
 
         <Menu>
-
-          {/* Home */}
           <MenuItem
             icon={<i className="fa-solid fa-house"></i>}
             component={<Link to="/dashboard" />}
@@ -44,7 +38,6 @@ export default function SideBar({ onOpenChangePass }) {
             Home
           </MenuItem>
 
-          {/* Users (only non system users) */}
           {!isSystemUser && (
             <MenuItem
               icon={<i className="fa-solid fa-user"></i>}
@@ -54,7 +47,6 @@ export default function SideBar({ onOpenChangePass }) {
             </MenuItem>
           )}
 
-          {/* Recipes (all users) */}
           <MenuItem
             icon={<i className="fa-solid fa-utensils"></i>}
             component={<Link to="/dashboard/recipes" />}
@@ -62,7 +54,6 @@ export default function SideBar({ onOpenChangePass }) {
             Recipes
           </MenuItem>
 
-          {/* Categories (only non system users) */}
           {!isSystemUser && (
             <MenuItem
               icon={<i className="fa-solid fa-list"></i>}
@@ -72,7 +63,6 @@ export default function SideBar({ onOpenChangePass }) {
             </MenuItem>
           )}
 
-          {/* Favourites (only system users) */}
           {isSystemUser && (
             <MenuItem
               icon={<i className="fa-solid fa-heart"></i>}
@@ -82,7 +72,6 @@ export default function SideBar({ onOpenChangePass }) {
             </MenuItem>
           )}
 
-          {/* Change password */}
           <MenuItem
             icon={<i className="fa-solid fa-lock"></i>}
             onClick={onOpenChangePass}
@@ -90,14 +79,12 @@ export default function SideBar({ onOpenChangePass }) {
             Change Password
           </MenuItem>
 
-          {/* Logout */}
           <MenuItem
             icon={<i className="fa-solid fa-right-from-bracket"></i>}
             onClick={logOut}
           >
             Logout
           </MenuItem>
-
         </Menu>
       </Sidebar>
     </div>

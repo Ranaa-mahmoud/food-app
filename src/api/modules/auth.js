@@ -15,3 +15,6 @@ export const forget = (data) => {
 export const reset = (data) => {
   return axiosClient.post("/Users/Reset", data);
 };
+export const changePassword = (data) => {
+  return axiosClient.put("/Users/ChangePassword", data);
+};

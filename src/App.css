@@ -1,8 +1,7 @@
 * {
   padding: 0;
   margin: 0;
-  box-sizing: border-box; 
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
 body {
@@ -62,9 +61,15 @@ body {
 
 /*  start sidebar  */
 .ps-sidebar .ps-sidebar-container {
+  height: 100vh;
+  min-height: 100vh;
+  border-top-right-radius: 58px;
   background-color: #1f263e;
   border-top-right-radius: 58px;
-
+  color: #fff;
+}
+.ps-sidebar .ps-sidebar {
+  border: none;
 }
 .ps-sidebar .ps-menu-button {
   color: #fff !important;

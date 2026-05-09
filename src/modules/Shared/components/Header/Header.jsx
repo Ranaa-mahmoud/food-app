@@ -1,14 +1,18 @@
-
-export default function Header({ title, description, imgUrl }) {
+export default function Header({ title, subtitle, description, imgUrl }) {
   return (
     <>
-      <div className="py-3 px-5  m-3   text-white  rounded rounded-4 header-bg">
+      <div className=" py-3 px-5  m-3   text-white  rounded  header-bg">
         <div className=" container-fluid">
           <div className="row">
             <div className="col-md-8 d-flex align-items-center ">
               <div>
-                <h1>{title}</h1>
-                <p className="py-2 text-muted">{description}</p>
+                <h2 className=" fw-bolder">
+                  {title}
+                  <span className="fw-light px-1  fw-lighter text-muted">
+                    {subtitle}
+                  </span>
+                </h2>
+                <p className="fw-normal w-75 my-3">{description}</p>
               </div>
             </div>
             <div className="col-md-4 text-end ">
@@ -17,7 +21,6 @@ export default function Header({ title, description, imgUrl }) {
           </div>
         </div>
       </div>
-    
     </>
   );
 }

@@ -13,21 +13,19 @@ export default function MasterLayout() {
   };
 
   return (
-    <div className="d-flex vh-100">
+    <div className="d-flex vh-100 overflow-hidden">
 
       {/* Sidebar */}
-      <div className="flex-shrink-0 vh-100">
+      <div >
         <SideBar onOpenChangePass={handleOpenChangePass} />
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow-1 d-flex flex-column">
+      <div className="w-100 overflow-auto">
 
         <Navbar />
 
-        <div className="flex-grow-1 overflow-auto ">
           <Outlet />
-        </div>
       </div>
 
       {/* Modal */}

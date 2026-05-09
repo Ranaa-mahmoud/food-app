@@ -7,39 +7,76 @@ import { deleteRecipes, getRecipes } from "../../../../api/modules/Recipes";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import photoModel from "/src/assets/images/delete-model.svg";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { addFavoriteRecipe } from "../../../../api/modules/userRecipe";
+import { getTags } from "../../../../api/modules/tags";
+import { getCategories } from "../../../../api/modules/categories";
+import { useNavigate } from "react-router-dom";
 
 export default function RecipesList() {
-  const navigate = useNavigate();
   const { loginData } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // ================= STATE =================
+  const [nameValue, setNameValue] = useState("");
+  const [tagValue, setTagValue] = useState("");
+  const [catValue, setCatValue] = useState("");
 
   const [recipesList, setRecipesList] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  // delete modal
   const [showDelete, setShowDelete] = useState(false);
   const [recipeId, setRecipeId] = useState(null);
 
-  // view modal
   const [showView, setShowView] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  const handleShowDelete = (id) => {
-    setRecipeId(id);
-    setShowDelete(true);
+  // ================= GET DATA =================
+  const getList = async () => {
+    try {
+      const res = await getRecipes();
+      setRecipesList(res?.data?.data || []);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleCloseDelete = () => setShowDelete(false);
-
-  const handleShowView = (recipe) => {
-    setSelectedRecipe(recipe);
-    setShowView(true);
+  const getAllTags = async () => {
+    try {
+      const res = await getTags();
+      const data = res?.data?.data || res?.data || [];
+      setTags(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log(err);
+      setTags([]);
+    }
   };
 
-  const handleCloseView = () => setShowView(false);
+  const getAllCategories = async () => {
+    try {
+      const res = await getCategories();
+      const data = res?.data?.data || res?.data || [];
+      setCategories(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log(err);
+      setCategories([]);
+    }
+  };
 
+  // ================= DELETE =================
+  const deleteRecipe = async (id) => {
+    try {
+      await deleteRecipes(id);
+      setRecipesList((prev) => prev.filter((r) => r.id !== id));
+      toast.success("Deleted successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ================= FAVORITE =================
   const addToFavs = async (id) => {
     try {
       await addFavoriteRecipe({ recipeId: id });
@@ -49,73 +86,80 @@ export default function RecipesList() {
     }
   };
 
-  const getList = async () => {
-    try {
-      const response = await getRecipes();
-      setRecipesList(response?.data?.data);
-    } catch (error) {
-      console.log(error);
-    }
+  // ================= MODALS =================
+  const handleShowDelete = (id) => {
+    setRecipeId(id);
+    setShowDelete(true);
   };
 
-  const deleteRecipe = async (id) => {
-    try {
-      await deleteRecipes(id);
-      setRecipesList((prev) => prev.filter((r) => r.id !== id));
-    } catch (error) {
-      console.log(error);
-    }
+  const handleShowView = (recipe) => {
+    setSelectedRecipe(recipe);
+    setShowView(true);
   };
 
+  // ================= EFFECT =================
   useEffect(() => {
     getList();
+    getAllTags();
+    getAllCategories();
   }, []);
+
+  // ================= FILTER =================
+  const filteredRecipes = recipesList.filter((recipe) => {
+    const matchName = recipe.name
+      ?.toLowerCase()
+      .includes(nameValue.toLowerCase());
+
+    const matchTag = tagValue ? recipe.tag?.id == tagValue : true;
+
+    const matchCat = catValue
+      ? recipe.category?.[0]?.id == catValue
+      : true;
+
+    return matchName && matchTag && matchCat;
+  });
 
   return (
     <>
+      {/* HEADER */}
       <Header
-        title={"Recipes Items"}
-        description={
-          "You can now add your items that any user can order it from the Application and you can edit"
-        }
+        title="Recipes"
+        subtitle={"Items"}
+        description={"You can now add your items..."}
         imgUrl={photo}
       />
 
       {/* DELETE MODAL */}
-      <Modal show={showDelete} onHide={handleCloseDelete}>
+      <Modal show={showDelete} onHide={() => setShowDelete(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Delete Item</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body className="text-center ">
-          <img src={photoModel} alt="photoModel" className="m-3 img-fluid" />
-          <h5 className="my-2 ">Delete This Category ?</h5>
-          <p className="text-muted">
-            are you sure you want to delete this item ? if you are sure just click on delete it
-          </p>
+        <Modal.Body className="text-center">
+          <img src={photoModel} alt="" className="m-3 img-fluid" />
+          <h5>Delete this item?</h5>
         </Modal.Body>
 
         <Modal.Footer>
           <Button
-            variant="btn-outline-danger"
-            onClick={async () => {
-              await deleteRecipe(recipeId);
-              handleCloseDelete();
+            variant="danger"
+            onClick={() => {
+              deleteRecipe(recipeId);
+              setShowDelete(false);
             }}
           >
-            Delete this item
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
 
       {/* VIEW MODAL */}
-      <Modal show={showView} onHide={handleCloseView} centered>
-        <Modal.Header closeButton >
-          <Modal.Title className="text-success fw-bold rounded-3">Recipe Details</Modal.Title>
+      <Modal show={showView} onHide={() => setShowView(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Recipe Details</Modal.Title>
         </Modal.Header>
 
-        <Modal.Body >
-
+        <Modal.Body>
           <div className="text-center mb-3">
             <img
               src={
@@ -123,123 +167,136 @@ export default function RecipesList() {
                   ? `https://upskilling-egypt.com:3006/${selectedRecipe.imagePath}`
                   : noData
               }
-              alt="recipe"
-              style={{
-                width: "400px",
-                height: "200px",
-                objectFit: "cover",
-                borderRadius: "12px",
-              }}
+              style={{ width: "400px", height: "200px", objectFit: "cover" }}
+              alt=""
             />
           </div>
 
-          <h4 className="text-center mb-2 fw-bold">{selectedRecipe?.name}</h4>
-
-          <p className="text-muted text-center">
+          <h4 className="text-center">{selectedRecipe?.name}</h4>
+          <p className="text-center text-muted">
             {selectedRecipe?.description}
           </p>
-
-          <div className="p-3 rounded text-white" style={{ background: "#106207" }}>
-            <div className="d-flex justify-content-between mb-2">
-              <strong>Price:</strong>
-              <span>{selectedRecipe?.price}</span>
-            </div>
-
-            <div className="d-flex justify-content-between mb-2">
-              <strong>Category:</strong>
-              <span>{selectedRecipe?.category?.[0]?.name}</span>
-            </div>
-
-            <div className="d-flex justify-content-between">
-              <strong>Tag:</strong>
-              <span>{selectedRecipe?.tag?.name}</span>
-            </div>
-          </div>
-
         </Modal.Body>
 
-        <Modal.Footer className="d-flex justify-content-between">
-
-          <Button variant=" btn btn-outline-success"
+        <Modal.Footer>
+          <Button
+            variant="success"
             onClick={() => addToFavs(selectedRecipe?.id)}
           >
-            <i className="fa fa-heart me-2 text-danger"></i>
             Add to Favorite
           </Button>
-
-        
         </Modal.Footer>
       </Modal>
 
-      {/* TABLE (UNCHANGED EXACTLY) */}
-      <div className="px-5 py-3 ">
-        {recipesList.length > 0 ? (
-          <table className="table table-striped table-responsive text-center">
-            <thead className="table-light  fs-5">
-              <tr style={{ height: "50px" }}>
-                <th className="py-4 px-3" scope="col">#</th>
-                <th className="py-4 px-3" scope="col">Name</th>
-                <th className="py-4 px-3" scope="col">Image</th>
-                <th className="py-4 px-3" scope="col">Price</th>
-                <th className="py-4 px-3" scope="col">Description</th>
-                <th className="py-4 px-3" scope="col">Category</th>
-                <th className="py-4 px-3" scope="col">Tag</th>
-                <th className="py-4 px-3" scope="col">Action</th>
+      {/* FILTERS */}
+      <div className="row p-3 my-2 mx-0">
+        <div className="col-md-6">
+          <input
+            className="form-control"
+            placeholder="Search..."
+            value={nameValue}
+            onChange={(e) => setNameValue(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-3">
+          <select
+            className="form-select"
+            value={tagValue}
+            onChange={(e) => setTagValue(e.target.value)}
+          >
+            <option value="">Tag</option>
+            {tags?.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="col-md-3">
+          <select
+            className="form-select"
+            value={catValue}
+            onChange={(e) => setCatValue(e.target.value)}
+          >
+            <option value="">Category</option>
+            {categories?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* TABLE */}
+      <div className="px-5 py-3">
+        {filteredRecipes.length > 0 ? (
+          <table className="table text-center">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Tag</th>
+                <th>Action</th>
               </tr>
             </thead>
 
             <tbody>
-              {recipesList.map((recipe) => (
-                <tr key={recipe.id} style={{ height: "65px" }}>
-                  <th className="py-3 px-3">{recipe.id}</th>
-
-                  <td className="py-3 px-3">{recipe.name}</td>
+              {filteredRecipes.map((r) => (
+                <tr key={r.id}>
+                  <td>{r.id}</td>
+                  <td>{r.name}</td>
 
                   <td>
                     <img
                       src={
-                        recipe.imagePath
-                          ? `https://upskilling-egypt.com:3006/${recipe.imagePath}`
+                        r.imagePath
+                          ? `https://upskilling-egypt.com:3006/${r.imagePath}`
                           : noData
                       }
-                      style={{
-                        width: "100%",
-                        maxWidth: "100px",
-                        height: "50px",
-                        objectFit: "cover",
-                      }}
-                      alt="img recipe"
+                      style={{ width: "80px", height: "50px" }}
+                      alt=""
                     />
                   </td>
 
-                  <td className="py-3 px-3">{recipe.price}</td>
-                  <td className="py-3 px-3">{recipe.description}</td>
-                  <td className="py-3 px-3">{recipe.category[0]?.name}</td>
-                  <td className="py-3 px-3">{recipe.tag?.name}</td>
+                  <td>{r.price}</td>
+                  <td>{r.category?.[0]?.name}</td>
+                  <td>{r.tag?.name}</td>
 
-                  <td className="py-3 px-3">
+                  <td>
+                 
 
-                    {loginData?.userGroup === "SystemUser" ? (
-                      <i
-                        className="fa fa-eye text-success mx-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleShowView(recipe)}
-                      ></i>
-                    ) : (
-                      <>
-                        <i
-                          className="fa fa-edit text-warning mx-2"
-                          style={{ cursor: "pointer" }}
-                        ></i>
 
-                        <i
-                          className="fa fa-trash text-danger"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleShowDelete(recipe.id)}
-                        ></i>
-                      </>
-                    )}
 
+                      {/* VIEW */}
+  <i
+    className="fa fa-eye text-success"
+    style={{ cursor: "pointer" }}
+    onClick={() => navigate(`/dashboard/recipes/view/${r.id}`)}
+  />
+
+  {/* EDIT */}
+  {loginData?.userGroup !== "SystemUser" && (
+    <i
+      className="fa fa-edit text-warning mx-3"
+      style={{ cursor: "pointer" }}
+      onClick={() => navigate(`/dashboard/recipes/edit/${r.id}`)}
+    />
+  )}
+
+  {/* DELETE */}
+  {loginData?.userGroup !== "SystemUser" && (
+    <i
+      className="fa fa-trash text-danger"
+      style={{ cursor: "pointer" }}
+      onClick={() => handleShowDelete(r.id)}
+    />
+  )}
                   </td>
                 </tr>
               ))}

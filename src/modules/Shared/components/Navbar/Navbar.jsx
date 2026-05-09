@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import photoNav from "/src/assets/images/avatar.png";
+import { useContext } from "react";
+import { AuthContext } from "../../../../context/AuthContext";
 
-export default function Navbar({ loginData }) {
+export default function Navbar() {
+    const { loginData } = useContext(AuthContext);
+  
   return (
-    <div className="bg-light rounded-4 py-3 mx-5 my-4">
+    <div className="bg-light rounded-4 py-3 mx-5 my-4 ">
       <nav className="navbar navbar-expand-lg">
         <div className="container-fluid d-flex justify-content-between align-items-center">
           <form className="d-flex align-items-center rounded-4 px-2 py-1 bg-white w-75">
