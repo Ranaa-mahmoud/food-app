@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../../../Shared/components/Header/Header";
 import photo from "/src/assets/images/header.png";
-import {
-  createCategory,
-  getCategories,
-  deleteCategory,
-} from "../../../../api/modules/Categories";
-import NoData from "../../../Shared/components/NoData/NoData";
+import {createCategory,getCategories,deleteCategory} from '../../../../api/modules/Categories';
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import photoModel from "/src/assets/images/delete-model.svg";
