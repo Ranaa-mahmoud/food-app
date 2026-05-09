@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import photo from "../../../../assets/images/not-found-bg.png";
 import logo from "../../../../assets/images/logo.png";
-
+import photo from "../../../../assets/images/not-found-bg.png";
 export default function NotFound() {
   const navigate = useNavigate();
 
