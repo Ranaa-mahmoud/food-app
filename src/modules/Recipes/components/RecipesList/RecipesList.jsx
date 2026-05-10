@@ -11,7 +11,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { addFavoriteRecipe } from "../../../../api/modules/userRecipe";
 import { getTags } from "../../../../api/modules/tags";
-import { getCategories } from "../../../../api/modules/categories";
+import { getCategories } from "../../../../api/modules/Categories";
 import { useNavigate } from "react-router-dom";
 
 export default function RecipesList() {
