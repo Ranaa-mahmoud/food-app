@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import logo from "../../../../assets/images/logo.png";
-import photo from "../../../../assets/images/not-found-bg.png";
+import logo from "@/assets/images/logo.png";
+import photo from "@/assets/images/not-found-bg.png";
 export default function NotFound() {
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ export default function NotFound() {
           <h1 className="fw-bold display-4">Oops.</h1>
           <h2 className="text-success">Page not found</h2>
           <p className="text-muted">
-            This page doesn’t exist or was removed. We suggest you go back to
+            This page doesnt exist or was removed. We suggest you go back to
             home.
           </p>
 
